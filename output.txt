@@ -1,0 +1,181 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Wed Sep 10 22:49:12 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Tue Sep 09 2025 12:08:29 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> create table clientmaster(srno int, name varchar(20));
+
+Table created.
+
+SQL> create table Audit_t as select * from clientmaster;
+
+Table created.
+
+SQL> insert into clientmaster (srno,varchar) values (101,'prajakta');
+insert into clientmaster (srno,varchar) values (101,'prajakta')
+                               *
+ERROR at line 1:
+ORA-01747: invalid user.table.column, table.column, or column specification
+
+
+SQL> insert into clientmaster (srno,name) values (101,'prajakta');
+
+1 row created.
+
+SQL> insert into clientmaster (srno,name) values (102,'pooja');
+
+1 row created.
+
+SQL> insert into clientmaster (srno,name) values (102,'pranat');
+
+1 row created.
+
+SQL> @C:\Users\Prajakta\Desktop\sqlplus\trigger\update.sql
+
+Trigger created.
+
+SQL> select * from clientmaster;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       102 pooja
+       102 pranat
+
+SQL> update clientmaster set srno = 103 where name = 'pranat';
+
+1 row updated.
+
+SQL> select * from clientmaster;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       102 pooja
+       103 pranat
+
+SQL> select * from Audit_t;
+
+      SRNO NAME
+---------- --------------------
+       102 pranat
+
+SQL> delete from clientmaster where srno = 102;
+
+1 row deleted.
+
+SQL> select * from Audit_t;
+
+      SRNO NAME
+---------- --------------------
+       102 pranat
+       102 pooja
+
+SQL> commit;
+
+Commit complete.
+
+
+SQL> @C:\Users\Prajakta\Desktop\sqlplus\trigger\update.sql
+
+Trigger created.
+
+SQL> select * from clientmaster;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       103 pranat
+
+SQL> insert into cilentmaster (srno,name) values (103,'pooja');
+insert into cilentmaster (srno,name) values (103,'pooja')
+            *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+SQL> select * from Audit_t;
+
+      SRNO NAME
+---------- --------------------
+       102 pranat
+       102 pooja
+
+SQL> create table insertbackup as select * from clientmaster;
+
+Table created.
+
+SQL> @C:\Users\Prajakta\Desktop\sqlplus\trigger\insert.sql
+
+Trigger created.
+
+SQL> select * from insertbackup;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       103 pranat
+
+SQL> insert into clientmaster values(104,'divya');
+
+1 row created.
+
+SQL> select * from Audit_t;
+
+      SRNO NAME
+---------- --------------------
+       102 pranat
+       102 pooja
+
+SQL> select * from clientmaster;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       103 pranat
+       104 divya
+
+SQL> @C:\Users\Prajakta\Desktop\sqlplus\trigger\Audit_insert.sql
+
+Trigger created.
+
+SQL> @C:\Users\Prajakta\Desktop\sqlplus\trigger\Audit_update.sql
+
+Trigger created.
+
+SQL> select * from clientmaster;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       103 pranat
+       104 divya
+
+SQL> select * from Audit_t;
+
+      SRNO NAME
+---------- --------------------
+       102 pranat
+       102 pooja
+
+SQL> select * from insertbackup;
+
+      SRNO NAME
+---------- --------------------
+       101 prajakta
+       103 pranat
+       104 divya
+
+SQL> commit;
+
+Commit complete.
+
+SQL>
